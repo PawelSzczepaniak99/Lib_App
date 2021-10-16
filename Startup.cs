@@ -61,11 +61,7 @@ namespace LibApp
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllerRoute(
-                    name: "BooksByReleaseDate",
-                    pattern: "books/released/{year}/{month}",
-                    defaults: new { controller = "Books", action = "ByReleasedate" },
-                    new { year = @"\d{4}", month = @"\d{2}" });
+              
 
                 endpoints.MapControllerRoute(
                     name: "default",
