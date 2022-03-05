@@ -1,0 +1,40 @@
+@model IEnumerable<LibApp.Models.Book>
+
+@{ ViewBag.Title = "Books";
+                Layout = "~/Views/Shared/_Layout.cshtml"; }
+
+<h2>Books</h2>
+
+@if (User.IsInRole("Owner") || User.IsInRole("StoreManager"))
+{
+    <p>
+        <a class="btn btn-primary" asp-action="New">New Book</a>
+    </p>
+}
+
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th>Book</th>
+            <th colspan="2">Genre</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var book in Model)
+        {
+<tr>
+    <td><a asp-action="Details" asp-route-id="@book.Id">@Html.DisplayFor(modelItem => book.Name)</a></td>
+    <td>@Html.DisplayFor(modelItem => book.Genre.Name)</td>
+    <td>
+        @if (User.IsInRole("Owner") || User.IsInRole("StoreManager"))
+        {
+            <a asp-action="Edit" asp-route-id="@book.Id">Edit |</a>
+        }
+
+        <a asp-action="Details" asp-route-id="@book.Id">Details</a>
+
+    </td>
+
+</tr>}
+    </tbody>
+</table>

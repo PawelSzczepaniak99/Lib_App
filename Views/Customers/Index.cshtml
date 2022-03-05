@@ -1,0 +1,128 @@
+@using Microsoft.AspNetCore.Identity
+@{ ViewBag.Title = "Customers";
+    Layout = "~/Views/Shared/_Layout.cshtml"; }
+@model IEnumerable<LibApp.Models.Customer>
+@inject UserManager<IdentityUser> UserManager
+
+<h2>Customers</h2>
+
+<p>
+    <a class="btn btn-primary" asp-action="New">New Customer</a>
+</p>
+
+<table id="customers" class="table table-hover">
+    <thead>
+        <tr>
+            <th>Customer</th>
+            <th>Membership Type</th>
+            <th>Email</th>
+            <th>Birthdate</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            @if (User.IsInRole("Owner"))
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.Name)</td>
+                    <td>@Html.DisplayFor(modelItem => item.MembershipType)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Email)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Birthdate)</td>
+                    
+                    <td>
+                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                        <a asp-action="DeleteCustomer" asp-route-id="@item.Id">Delete</a>
+                    </td>
+                </tr>
+            }
+            @if (User.IsInRole("StoreManager") && item.RoleId == 1)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.Name)</td>
+                    <td>@Html.DisplayFor(modelItem => item.MembershipType)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Email)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Birthdate)</td>
+                    
+                    <td>
+                        <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+@*@section Scripts
+{
+    <script>
+        $(document).ready(function () {
+            $("#customers").DataTable({
+                ajax: {
+                    url: "api/customers",
+                    dataSrc: ""
+                },
+                columns: [
+                    {
+                        data: "name",
+                        render: function (data, type, customer) {
+                            return "<a href='customers/edit/" + customer.id + "'>" + customer.name + "</a>";
+                        }
+                    },
+                    {
+                        data: "membershipType.discountRate"
+                    },
+                    {
+                            //return "<button class='btn btn-secondary js-details' data-customer-id=" + data + ">Details</button>" +
+                            //    "<button class='btn btn-secondary js-delete' data-customer-id=" + data + ">Delete</button>";
+                        data: "id",
+                        render: function (data) {
+                        let delete="<button class='btn btn-secondary js-details' data-customer-id=" + data + ">Details</button>";
+                            let details = "<a href='/Customers/Details/" + data + "'/>";
+                            @if (User.IsInRole("administrator"))
+                            {
+                                <text>return details + delete</text>
+                            }
+                            else {
+                                <text>return details </text>
+                                }
+                    }
+                    }
+                ]
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            var table = $("#customers").DataTable();
+            $("#customers").on("click", ".js-delete", function () {
+                var button = $(this);
+                bootbox.confirm({
+                    title: "Delete user",
+                    message: "Confirm customer deletion?",
+                    buttons: {
+                        cancel: {
+                            label: '<i class="fa fa-times"></i> Cancel'
+                        },
+                        confirm: {
+                            label: '<i class="fa fa-check"></i> Confirm'
+                        }
+                    },
+                    callback: function (result) {
+                        if (result) {
+                            $.ajax({
+                                url: "api/customers/" + button.attr("data-customer-id"),
+                                method: "DELETE",
+                                success: function () {
+                                    table.row(button.parents("tr")).remove().draw();
+                                }
+                            });
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+}*@
